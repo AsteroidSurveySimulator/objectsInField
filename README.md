@@ -1,5 +1,6 @@
 =========================
-Copyright (c) 2018, California Institute of Technology ("Caltech"). 
+
+Copyright (c) 2018, California Institute of Technology ("Caltech").
 U.S. Government sponsorship acknowledged.
 
 All rights reserved.

@@ -4,6 +4,7 @@ KPL/MK
 KERNELS_TO_LOAD = ( '../kernels/de430.bsp',
 		    '../kernels/earth_070425_370426_predict.bpc',
 		    '../kernels/earth_latest_high_prec.bpc',
-		    '../kernels/earth_topo_050714.tf',
-                    '../kernels/naif0011.tls')
+                    '../kernels/earth_topo_050714.tf',
+                    '../kernels/naif0012.tls')
+
 		    

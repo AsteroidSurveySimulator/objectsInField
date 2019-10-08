@@ -21,12 +21,9 @@ import glob
 import sys
 import argparse
 import warnings
-
-#cwd = os.getcwd()
-#os.chdir('../pyoorb')
 import pyoorb as oo
 import code.sso as ss
-#os.chdir(cwd)
+
 
 #Parsing command line arguments
 parser = argparse.ArgumentParser()

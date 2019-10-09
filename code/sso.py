@@ -146,7 +146,7 @@ class asteroids:
 
         self.ephcount += 1
         tmpstart=np.expand_dims(self.svec[:][self.ephcount-1],0)
-        tmp,err=oo.pyoorb.oorb_propagation_nb(tmpstart,epoch)
+        tmp,err=oo.pyoorb.oorb_propagation(tmpstart,epoch, in_dynmodel='N')
         self.svec=np.append(self.svec,tmp,axis=0)
 
 #-----------------------------------------------------------------------------------------------
@@ -159,7 +159,7 @@ class asteroids:
 
         self.ephcount += 1
         tmpstart=np.expand_dims(self.svec[:][self.ephcount-1],0)
-        tmp,err=oo.pyoorb.oorb_propagation_2b(tmpstart,epoch)
+        tmp,err=oo.pyoorb.oorb_propagation(tmpstart,epoch, in_dynmodel='2')
         self.svec=np.append(self.svec,tmp,axis=0)
 
 #-----------------------------------------------------------------------------------------------

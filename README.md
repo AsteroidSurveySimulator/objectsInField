@@ -52,3 +52,7 @@ population of moving objects in a specified list of field pointings.
 ## Setup:  
 Download the package and run the `DownloadKernels.sh` script
 in the kernels/ folder.
+
+## Note:  
+Regularly update and run `DownloadKernels.sh` file to download 
+the latest SPICE kernels.

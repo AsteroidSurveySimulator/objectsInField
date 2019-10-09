@@ -329,13 +329,11 @@ class asteroids:
                 spicestateseq[counter]=sp.mxvg(matrix,spicestates[counter],6,6)
                 counter=counter+1
                 
-            
 #           SPK Type 9, Lagrange interpolation (Open Orb states are heliocentric, so central body is 10, which is the Sun)
 #            sp.spkw09(handle, self.spiceid, 10, "J2000", segmenttimeet[0], segmenttimeet[-1], str(i), 10, segmentsize, spicestateseq, segmenttimeet)
 
 #           SPK Type 5 (Two body interpolation)
             sp.spkw05(handle,2444444+self.id,10, "J2000", segmenttimeet[0], segmenttimeet[-1], str(i), shared.gms, segmentsize, spicestateseq, segmenttimeet)
-            
             
         sp.spkcls(handle)
         
@@ -401,7 +399,6 @@ class asteroids:
             self.nightlydra[counter] = tmp[4]
             self.nightlydec[counter] = tmp[2]
             self.nightlyddec[counter]= tmp[5]
-
 
         # Unloading SPK
 #        sp.unload(self.spkname)
@@ -505,7 +502,6 @@ class asteroids:
         for i in range(0,len(time)):
 
             ttet= self.mjd2et(time[i])
-
             test=sp.fovtrg("-99999",str(self.spiceid),'POINT',' ','LT',observerint,ttet)
             if (test):# TESTING
                 topostate,lttime = sp.spkezr(str(self.spiceid),ttet,"J2000","LT",observerint)
@@ -545,13 +541,10 @@ class asteroids:
                 # END TESTING
     
         sp.unload(self.spkname)
-
-
         
 ############################################################################################################
 #                                            Asteroid List Class                                           #
 ############################################################################################################
-
 
 class asteroidlist(asteroids):
 
@@ -648,7 +641,6 @@ class asteroidlist(asteroids):
         for i in self.asteroids:
             i.save(self.outputfile, force)
 
-
 #-----------------------------------------------------------------------------------------------
 
     def simulate(self, starttime, stoptime, camera, threshold, obscode):
@@ -687,7 +679,6 @@ class asteroidlist(asteroids):
             del i
             del self.asteroids[0]
             count=count+1
-
 
         # Unloading all SPICE kernels required for simulation
         sp.unload(camera.ikfile)

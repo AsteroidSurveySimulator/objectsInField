@@ -51,12 +51,15 @@ population of moving objects in a specified list of field pointings.
 * other standard python libraries like numpy, pandas, etc.  
   
 ## Setup:  
-Download the package and run the `DownloadKernels.sh` script
+* Download the package and run the `DownloadKernels.sh` script
 in the `kernels/` folder.  
+
+* Copy the binary `de430.dat` file required by pyoorb into the `data/` folder.
 
 ## Usage:
 From the `main/` folder run `python main.py input.config`.  
-Refer to the documentation under `doc` folder for more details.
+Refer to the documentation under the `doc/` folder for more  
+details.
 
 ## Note:  
 Regularly update and run `DownloadKernels.sh` file to download 

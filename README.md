@@ -37,11 +37,12 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-This module generates a list of candidate detections for an input
-population of moving objects in a specified list of field pointings.
-
+  
 =========================================================================   
 
+This module generates a list of candidate detections for an input
+population of moving objects in a specified list of field pointings.  
+  
 ## Requirements:  
 
 * python 3  

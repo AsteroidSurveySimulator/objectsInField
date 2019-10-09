@@ -1,6 +1,5 @@
 # objectsInField
 
-===================================================================
 
 Copyright (c) 2018, California Institute of Technology ("Caltech").
 U.S. Government sponsorship acknowledged.

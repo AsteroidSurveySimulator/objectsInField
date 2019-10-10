@@ -23,13 +23,9 @@ asteroid population and a list of telescope field pointings.
 
 \section{Installation}
 
-The software has been tested with Python 3.4.6. It requires
-spiceypy~\citep{spice,annex17} and pyoorb~\citep{openorb} python packages.
-
-For pyoorb the following system variables need to be set:\\
-\verb+export LD_LIBRARY_PATH=`path_to_liboorb.so and pyoorb.so'+ \\
-\verb+export OORB_DATA=`path_to_oorb_data_directory'+ \\
-\verb+export OORB_CONF=`path_to_oorb_conf_file'+ \\
+The software has been tested with Python 3.4 and 3.7. It requires
+spiceypy~\citep{spice,annex17}, pyoorb~\citep{openorb}, and other
+standard python packages.
 
 The directory structure is as follows:\\
 
@@ -225,14 +221,13 @@ requires the `Summary' table with the fields described in Table
     \hline
     Column name                   & Type     & Units   & Description\\
     \hline \hline \\
-    ObsHistID                     & integer  & -       & Unique visit identifier. \\ \\
-    fieldRA                       & real     & radians & Right Ascension (J2000) of the field center for this visit. \\ \\
-    fieldDec                      & real     & radians & Declination (J2000) of the field center for this visit (same as Field.fieldDec).\\ \\
-    expMJD                        & real     & days    & Modified Julian Date at the start of a visit. \\ \\
-    rotSkyPos                     & real     & radians & The orientation of the sky in the focal plane measured 
+    observationId                 & integer  & -       & Unique visit identifier. \\ \\
+    ra                            & real     & radians & Right Ascension (J2000) of the field center for this visit. \\ \\
+    dec                           & real     & radians & Declination (J2000) of the field center for this visit (same as Field.fieldDec).\\ \\
+    observationstartMJD           & real     & days    & Modified Julian Date at the start of a visit. \\ \\
+    angle                         & real     & radians & The orientation of the sky in the focal plane measured 
                                                          as the angle between North on the sky and the "up" direction 
                                                          in the focal plane. \\ \\
-    rotTelPos                     & real     & radians & The physical angle of the rotator with respect to the mount. \\ \\
 \hline \\
 
 

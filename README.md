@@ -37,11 +37,12 @@ DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
 THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-This module generates a list of candidate detections for an input
-population of moving objects in a specified list of field pointings.
-
+  
 =========================================================================   
 
+This module generates a list of candidate detections for an input
+population of moving objects in a specified list of field pointings.  
+  
 ## Requirements:  
 
 * python 3  
@@ -50,8 +51,15 @@ population of moving objects in a specified list of field pointings.
 * other standard python libraries like numpy, pandas, etc.  
   
 ## Setup:  
-Download the package and run the `DownloadKernels.sh` script
-in the kernels/ folder.
+* Download the package and run the `DownloadKernels.sh` script
+in the `kernels/` folder.  
+
+* Copy the binary `de430.dat` file required by pyoorb into the `data/` folder.
+
+## Usage:
+From the `main/` folder run `python main.py input.config`. 
+Refer to the documentation under the `doc/` folder for more 
+details.
 
 ## Note:  
 Regularly update and run `DownloadKernels.sh` file to download 

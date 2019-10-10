@@ -57,8 +57,8 @@ in the `kernels/` folder.
 * Copy the binary `de430.dat` file required by pyoorb into the `data/` folder.
 
 ## Usage:
-From the `main/` folder run `python main.py input.config`.  
-Refer to the documentation under the `doc/` folder for more  
+From the `main/` folder run `python main.py input.config`. 
+Refer to the documentation under the `doc/` folder for more 
 details.
 
 ## Note:  

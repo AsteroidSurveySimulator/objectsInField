@@ -46,11 +46,17 @@ population of moving objects in a specified list of field pointings.
 ## Requirements:  
 
 * python 3  
-* spiceypy  
-* [pyoorb](https://github.com/oorb/oorb)  
+* spiceypy python library  
+* [pyoorb](https://github.com/oorb/oorb) python library   
 * other standard python libraries like numpy, pandas, etc.  
+* [NAIF SPICE Utilities](https://naif.jpl.nasa.gov/naif/utilities.html)
   
 ## Setup:  
+
+* Make sure you can import spiceypy, pyoorb, and other libraries in python.  
+
+* Make sure you can run the NAIF SPICE Utility executables from your command line.
+
 * Download the package and run the `DownloadKernels.sh` script
 in the `kernels/` folder.  
 

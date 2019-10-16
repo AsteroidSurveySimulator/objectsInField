@@ -23,9 +23,20 @@ asteroid population and a list of telescope field pointings.
 
 \section{Installation}
 
-The software has been tested with Python 3.4 and 3.7. It requires
-spiceypy~\citep{spice,annex17}, pyoorb~\citep{openorb}, and other
-standard python packages.
+The software has been tested with Python 3 on MacOS and Linux.
+
+Requirements:\\
+- python 3\\
+- spiceypy python library\\
+- pyoorb python library\\
+- other standard python libraries like numpy, pandas, etc.\\
+- NAIF SPICE Utilities\\
+
+Setup:\\
+- Make sure you can import spiceypy, pyoorb, and other libraries in python.\\
+- Make sure you can run the NAIF SPICE Utility executables from your command line.\\
+- Download the package and run the DownloadKernels.sh script in the kernels/ folder.\\
+- Copy the binary de430.dat file required by pyoorb into the data/ folder.\\
 
 The directory structure is as follows:\\
 
@@ -57,7 +68,6 @@ The directory structure is as follows:\\
     [telescope.py]
     [orbits.py]
     [ooephemerides.py]
-    [bspidmod]
   ]
   [kernels
     [...]
@@ -80,14 +90,14 @@ An additional directory will be created to store trajectories of
 asteroids as SPK files~\citep{spice}.
 
 
-\section{Inputs}
+\section{Usage}
 
 The software should be run from the main directory. The general usage
 of the software is: \\
 
-\verb+$ main.py configfile > output+ \\
+\verb+$ python main.py configfile > output+ \\
 or \\
-\verb+$ main.py -f configfile > output+ \\
+\verb+$ python main.py -f configfile > output+ \\
 
 Here \verb+configfile+ is a file containing all the input parameters
 for the simulation. The output can be redirected to a file using the
@@ -214,7 +224,7 @@ accepts. Mandatory fields are denoted by an asterisk (*).
 
 The survey database is an LSST OpSim SQLite database or a reduced
 version of it with only the necessary fields. At a minimum the database
-requires the `Summary' table with the fields described in Table
+requires the `ObsHistory' table with the fields described in Table
 \ref{tab:sumdesc}.
 
 \begin{longtable}{l l p{20mm} p{50mm}}

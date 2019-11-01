@@ -526,7 +526,7 @@ class asteroids:
 #                opstr=opstr+"%10s " %(test)
                 opstr=opstr+"%16.3f " %(radec[0])
                 opstr=opstr+"%8.3f " %(radec[3])
-                opstr=opstr+"%11.6f " %(np.degrees(radec[1]))
+                opstr=opstr+"%11.6f " %(np.degrees(radec[1])%360)
                 opstr=opstr+"%9.6f " %(np.degrees(radec[4])*shared.day2s)
                 opstr=opstr+"%10.6f " %(np.degrees(radec[2]))
                 opstr=opstr+"%9.6f " %(np.degrees(radec[5])*shared.day2s)

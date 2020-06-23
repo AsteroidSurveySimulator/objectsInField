@@ -53,14 +53,27 @@ population of moving objects in a specified list of field pointings.
   
 ## Setup:  
 
-* Make sure you can import spiceypy, pyoorb, and other libraries in python.  
+* Make sure you have `python>=3.6 spiceypy openorb numpy pandas matplotlib`.
+  If you're using conda, you can create a development environment with
+  all the prerequisites using:
 
-* Make sure you can run the NAIF SPICE Utility executables from your command line.
+```
+conda create -n sim-dev install -c conda-forge python spiceypy openorb numpy pandas matplotlib
+conda activate sim-dev
+```
 
-* Download the package and run the `DownloadKernels.sh` script
-in the `kernels/` folder.  
+* Download the various SPICE utilities and kernels by running
 
-* Copy the binary `de430.dat` file required by pyoorb into the `data/` folder.
+```
+./bootstrap.sh
+```
+
+* Run a test:
+
+```
+cd test
+python ../main/main.py -f input.config
+```
 
 ## Usage:
 From the `main/` folder run `python main.py input.config`. 

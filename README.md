@@ -1,6 +1,6 @@
-# objectsInField
+# objectsInField (oif)
 
-This module generates a list of candidate detections for an input
+This package generates a list of candidate detections for an input
 population of moving objects in a specified list of field pointings.  
   
 ## Requirements:  
@@ -13,31 +13,33 @@ population of moving objects in a specified list of field pointings.
 
 ## Setup (for developers):
 
-* Make sure you have `python>=3.6 spiceypy openorb numpy pandas matplotlib`.
-  If you're using conda, you can create a development environment with
-  all the prerequisites using:
+The easiest way to get started is by using the Anaconda Python
+Distribution's `conda` package manager
+
+Begin by creating and activating an environment with all the prerequisites:
 
 ```
-conda create -n sim-dev install -c conda-forge python spiceypy openorb numpy pandas matplotlib
-conda activate sim-dev
+conda create -n oif-dev -c conda-forge -c mjuric python spiceypy openorb numpy pandas matplotlib spice-utils
+conda activate oif-dev
 ```
 
-* Download the various SPICE utilities and kernels by running
+Then download the various large binary files (mostly SPICE kernels) that we
+don't keep in git by running
 
 ```
 ./bootstrap.sh
 ```
 
-* Set up the editable (in-place) development environment
+Next, set up an editable (in-place) development environment
 ```
 pip install -e .
 ```
+This will allow you to run the code from the source directory.
 
-* Run a test:
-
+Finally, run a test to make sure everything worked:
 ```
 cd test
-oif -f input.config
+oif input.config
 ```
 
 * To uninstall:
@@ -46,10 +48,10 @@ python setup.py develop -u
 ```
 
 ## Usage:
-From the `main/` folder run `python main.py input.config`. 
-Refer to the documentation under the `doc/` folder for more 
-details.
-
-## Note:  
-Regularly update and run `DownloadKernels.sh` file to download 
-the latest SPICE kernels.
+After installing (either the editable install with `pip install -e .`, or
+a regular install with `pip install`), from the directory containing your
+input configuration file run:
+```
+oif input.config
+```
+Refer to the documentation under the `doc/` folder for more details.

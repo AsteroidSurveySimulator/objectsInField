@@ -194,7 +194,6 @@ def main():
         with open("tmp_meta_kernel", "w") as fp:
             fp.write(txt)
         spice_mk = "tmp_meta_kernel"
-        print(f"XXXX: replaced the templated metakernel with {spice_mk}")
 
     # Loading Spice Meta Kernel
     try:

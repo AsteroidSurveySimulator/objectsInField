@@ -50,8 +50,8 @@ population of moving objects in a specified list of field pointings.
 * [pyoorb](https://github.com/oorb/oorb) python library   
 * other standard python libraries like numpy, pandas, etc.  
 * [NAIF SPICE Utilities](https://naif.jpl.nasa.gov/naif/utilities.html)
-  
-## Setup:  
+
+## Setup (for developers):
 
 * Make sure you have `python>=3.6 spiceypy openorb numpy pandas matplotlib`.
   If you're using conda, you can create a development environment with
@@ -68,11 +68,21 @@ conda activate sim-dev
 ./bootstrap.sh
 ```
 
+* Set up the editable (in-place) development environment
+```
+pip install -e .
+```
+
 * Run a test:
 
 ```
 cd test
-python ../main/main.py -f input.config
+oif -f input.config
+```
+
+* To uninstall:
+```
+python setup.py develop -u
 ```
 
 ## Usage:

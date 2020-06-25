@@ -3,7 +3,7 @@
 After setting up, run this demo (from the current directory) as follows:
 
 ```
-python ../main/main.py -f input.config 2>&1
+oif -f input.config
 ```
 
 Running should take 5-10 seconds, and the output should be equal to:

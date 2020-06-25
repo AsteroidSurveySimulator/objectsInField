@@ -20,17 +20,6 @@ download()
 }
 
 #
-# Download required SPICE utilities
-#
-echo "## Downloading SPICE utilities:"
-mkdir -p spice
-for F in msopck bspidmod pinpoint; do
-	download "spice/$F" "http://naif.jpl.nasa.gov/pub/naif/utilities/MacIntel_OSX_64bit/$F"
-	chmod +x "spice/$F"
-done
-echo
-
-#
 # Download required SPICE kernels
 #
 echo "## Downloading SPICE kernels:"

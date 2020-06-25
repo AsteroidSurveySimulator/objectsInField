@@ -127,8 +127,8 @@ class telescopelist:
         f.close()
 
         # Removing existing spk for same observatory
-        os.system('rm '+Code+'.bsp') # Use python command for deleting files. shutil.rmtree(path)
-        os.system('pinpoint -def tmp -spk '+Code+'.bsp > /dev/null')
+        os.system(f'rm -f {Code}.bsp') # Use python command for deleting files. shutil.rmtree(path)
+        os.system(f'pinpoint -def tmp -spk {Code}.bsp > /dev/null')
 
 
 ############################################################################################################
@@ -393,7 +393,7 @@ class camera:
             f.write("\n")
             f.write("INTERNAL_FILE_NAME      = 'Survey Sim Camera Orientation'\n")
             f.write("\n")
-            f.write("MAKE_FAKE_SCLK          = 'tmpsclk'\n")
+            f.write(f"MAKE_FAKE_SCLK          = 'tmpsclk'\n")
             f.write("CK_TYPE                 = 3\n")
             f.write("CK_SEGMENT_ID           = 'Instrument Orientation'\n")
             f.write("INSTRUMENT_ID           = %i \n" %(instrumentint))
@@ -423,10 +423,11 @@ class camera:
                     f.write("%s %f %f %f %f\n" %(timestring,quat[0],quat[1],quat[2],quat[3]))
         f.close()
         try:
-            os.system('rm tmp.ck tmpsclk test.ck fakesclk >/dev/null')
+            os.system('rm -f tmp.ck tmpsclk test.ck fakesclk')
         except:
             pass
-        os.system('msopck cksetupfile ckip tmp.ck > /dev/null')
+
+        os.system(f'msopck cksetupfile ckip tmp.ck >/dev/null ')
 
         os.system('rsync tmpsclk fakesclk > /dev/null')
         os.system('rsync tmp.ck test.ck > /dev/null')
@@ -442,7 +443,7 @@ class camera:
             f.write("CK_%i_SPK = %i\n\n" %(instrumentint, observerint))
             f.write("\\begintext\n")
         f.close()
-        
+   
         os.system('rsync tmp.fk test.fk')
 
 #-----------------------------------------------------------------------------------------------

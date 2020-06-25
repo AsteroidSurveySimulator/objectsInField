@@ -28,7 +28,7 @@ class PyOrbEphemerides(object):
         self.elemType = {'CART': 1, 'COM': 2, 'KEP': 3, 'DEL': 4, 'EQX': 5}
 
         # Set up oorb. Call this once.
-        if ephfile is None:
+        if ephfile is None and 'OORB_DATA' in os.environ:
             ephfile = os.path.join(os.getenv('OORB_DATA'), 'de405.dat')
         self.ephfile = ephfile
         self._init_oorb()

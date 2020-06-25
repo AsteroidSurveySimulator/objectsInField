@@ -539,7 +539,7 @@ class asteroids:
                 print(opstr)
                 count+=1
                 # END TESTING
-    
+
         sp.unload(self.spkname)
         
 ############################################################################################################
@@ -548,7 +548,7 @@ class asteroids:
 
 class asteroidlist(asteroids):
 
-    def __init__(self,inputfile,outputfile,object1,nObjects):
+    def __init__(self,inputfile,outputfile,object1,nObjects=-1):
 
         """ asteroidlist class contains a bunch of asteroid objects.
         
@@ -581,6 +581,9 @@ class asteroidlist(asteroids):
         ephemObj=ooephemerides.PyOrbEphemerides()
         ephemObj.setOrbits(orbObj)
         nOrbs=len(ephemObj.oorbElem)
+
+        if nObjects == -1:
+            nObjects = nOrbs-object1+1
 
         if (object1-1+nObjects > nOrbs):
             warnings.warn('nObjects (%d) goes beyond end of file (%s). Adjusting nObjects to %d.' %(nObjects, inputfile, nOrbs-object1+1), Warning)            

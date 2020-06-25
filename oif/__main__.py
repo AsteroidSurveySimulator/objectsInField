@@ -188,9 +188,21 @@ def main():
         sys.exit("Unable to load planetary ephemerides for OpenOrb from %s" %(depath))
 
     # Fix up the meta-kernel paths, if it's been templated
+    tmpdir = None
     txt = open(spice_mk).read()
     if "{{dirname}}" in txt:
-        txt = txt.replace("{{dirname}}", os.path.dirname(spice_mk))
+        datalink = os.path.dirname(spice_mk)
+        if len(datalink) > 80:
+            # SPICE has an 80-character limitation on string variables (sigh), so
+            # create a symlink to data dir from a (hopefully) shorter path
+            import tempfile, atexit
+            tmpdir = tempfile.TemporaryDirectory()
+            atexit.register(tmpdir.cleanup)		# clean up the dir on exit
+            datalink = os.path.join(tmpdir.name, 'd')
+            os.symlink(os.path.dirname(spice_mk), datalink)
+
+        # fill out the template
+        txt = txt.replace("{{dirname}}", datalink)
         with open("tmp_meta_kernel", "w") as fp:
             fp.write(txt)
         spice_mk = "tmp_meta_kernel"

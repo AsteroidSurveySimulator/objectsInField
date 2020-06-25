@@ -1,0 +1,46 @@
+{% set data = load_setup_py_data() %}
+
+package:
+  name: oif
+  version: {{ data.get('version') }}
+
+source:
+  path: ..
+
+build:
+  number: 0
+  noarch: python
+  script: python setup.py install --single-version-externally-managed --record=record.txt
+
+requirements:
+  host:
+    - python
+
+  run:
+    - python
+    - spice-utils
+    - spiceypy
+    - openorb
+    - numpy
+    - pandas
+    - matplotlib
+
+test:
+  source_files:
+    - test
+  imports:
+    - oif
+  commands:
+    - pwd && ls -l
+    - cd test && oif input.config
+
+about:
+  home: http://github.com/AsteroidSurveySimulator/objectsInField
+  license: BSD 3-clause
+  license_file: LICENSE
+  summary: 'A Python Module for Small Body Survey Simulations'
+  dev_url: //github.com/AsteroidSurveySimulator/objectsInField
+
+extra:
+  recipe-maintainers:
+    - mjuric

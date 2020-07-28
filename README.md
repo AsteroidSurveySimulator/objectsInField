@@ -1,46 +1,6 @@
+# objectsInField (oif)
 
-# objectsInField
-
-=========================================================================   
-Copyright (c) 2018, California Institute of Technology ("Caltech").
-U.S. Government sponsorship acknowledged.
-
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-* Redistributions of source code must retain the above
-copyright notice, this list of conditions and the
-following disclaimer.
-
-* Redistributions in binary form must reproduce the
-above copyright notice, this list of conditions and
-the following disclaimer in the documentation and/or
-other materials provided with the distribution.
-
-* Neither the name of Caltech nor its operating
-division, the Jet Propulsion Laboratory, nor the
-names of its contributors may be used to endorse or
-promote products derived from this software without
-specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-  
-=========================================================================   
-
-This module generates a list of candidate detections for an input
+This package generates a list of candidate detections for an input
 population of moving objects in a specified list of field pointings.  
   
 ## Requirements:  
@@ -50,23 +10,48 @@ population of moving objects in a specified list of field pointings.
 * [pyoorb](https://github.com/oorb/oorb) python library   
 * other standard python libraries like numpy, pandas, etc.  
 * [NAIF SPICE Utilities](https://naif.jpl.nasa.gov/naif/utilities.html)
-  
-## Setup:  
 
-* Make sure you can import spiceypy, pyoorb, and other libraries in python.  
+## Setup (for developers):
 
-* Make sure you can run the NAIF SPICE Utility executables from your command line.
+The easiest way to get started is by using the Anaconda Python
+Distribution's `conda` package manager
 
-* Download the package and run the `DownloadKernels.sh` script
-in the `kernels/` folder.  
+Begin by creating and activating an environment with all the prerequisites:
 
-* Copy the binary `de430.dat` file required by pyoorb into the `data/` folder.
+```
+conda create -n oif-dev -c conda-forge -c mjuric python spiceypy openorb numpy pandas matplotlib spice-utils
+conda activate oif-dev
+```
+
+Then download the various large binary files (mostly SPICE kernels) that we
+don't keep in git by running
+
+```
+./bootstrap.sh
+```
+
+Next, set up an editable (in-place) development environment
+```
+pip install -e .
+```
+This will allow you to run the code from the source directory.
+
+Finally, run a test to make sure everything worked:
+```
+cd test
+oif input.config
+```
+
+* To uninstall:
+```
+python setup.py develop -u
+```
 
 ## Usage:
-From the `main/` folder run `python main.py input.config`. 
-Refer to the documentation under the `doc/` folder for more 
-details.
-
-## Note:  
-Regularly update and run `DownloadKernels.sh` file to download 
-the latest SPICE kernels.
+After installing (either the editable install with `pip install -e .`, or
+a regular install with `pip install`), from the directory containing your
+input configuration file run:
+```
+oif input.config
+```
+Refer to the documentation under the `doc/` folder for more details.

@@ -321,7 +321,7 @@ class camera:
 
 #-----------------------------------------------------------------------------------------------
         
-    def readfields(self, dbname, line1, nlines, startdate):
+    def readfields(self, dbname, line1, nlines, startdate, surveydbquery):
 
         """Reads fields from database
 
@@ -334,7 +334,9 @@ class camera:
              nlines : int
                  Number of lines to read from the database
              startdate : float
-                 Shift all field times such that first one is startdate (0 if default)                
+                 Shift all field times such that first one is startdate (0 if default)  
+             surveydbquery : string
+                 customize the sql query string to account for changes in the opsim database designations 
 
         """        
 
@@ -348,7 +350,9 @@ class camera:
 
         count=0
 #        exec_str='SELECT obsHistID,expMJD,fieldRA,fieldDec,rotSkyPos FROM Summary order by expMJD limit %d,%d' %(line1-1,nlines)
-        exec_str='SELECT observationId,observationStartMJD,ra,dec,angle FROM ObsHistory order by observationStartMJD limit %d,%d' %(line1-1,nlines)
+#        exec_str='SELECT observationId,observationStartMJD,ra,dec,angle FROM ObsHistory order by observationStartMJD limit %d,%d' %(line1-1,nlines)
+        exec_str=surveydbquery+' limit %d,%d' %(line1-1,nlines)
+        
         for row in c.execute(exec_str):
             self.obsHistID[count] = row[0]
             self.fieldMJD[count]  = row[1]
@@ -363,7 +367,7 @@ class camera:
             
 #-----------------------------------------------------------------------------------------------
 
-    def createckfk(self, observer, dbname, t0, field1, nfields, mk):
+    def createckfk(self, observer, dbname, t0, field1, nfields, mk, surveydbquery):
 
         """Creates NAIF SPICE FK frame and corresponding CK frame
 
@@ -381,6 +385,8 @@ class camera:
                  Number of fields to be read from the database
              mk : string
                  Name of SPICE meta kernel
+             surveydbquery : string
+                 customize the SQL query string to account for changes in the opsim database designations 
 
         """      
 
@@ -409,7 +415,7 @@ class camera:
         f.close()
 
 
-        self.readfields(dbname,field1,nfields, t0)
+        self.readfields(dbname,field1,nfields, t0, surveydbquery)
         with open("ckip","w") as f:
 
             for i in range(len(self.fieldRA)):

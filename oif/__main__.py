@@ -159,8 +159,9 @@ def main():
     Field1           = config.getint('SURVEY','Field1')
     nFields          = config.getint('SURVEY','nFields')
     spaceflag        = config.get('SURVEY','Space')
+    surveydbquery    = config.get('SURVEY','Surveydbquery')
     asteroidspks     = os.path.join(asteroidspkpath, asteroidspks)
-
+    
     # resolve file locations relative to built-in data paths,
     # taking account of user overrides
     spice_mk              = resolve_path(spice_mk)
@@ -250,7 +251,7 @@ def main():
     c=ts.camera(cameradef_file,spiceik)
 
     # Loading list of pointings from survey and creating SPICE kernels
-    c.createckfk(obscode, surveydb, starttime, Field1, nFields, spice_mk)
+    c.createckfk(obscode, surveydb, starttime, Field1, nFields, spice_mk, surveydbquery)
 
     # starttime and ndays that covers the timespan of the survey
     tmptimes=c.fieldMJD

@@ -26,6 +26,9 @@ from . import sso as ss
 
 DATAPATH = os.path.join(os.path.dirname(__file__), 'data')
 USER_DATAPATH = None
+
+CWD = os.getcwd()
+
 def resolve_path(fn):
     # if absolute, return as-is
     if os.path.isabs(fn):
@@ -162,6 +165,10 @@ def main():
     surveydbquery    = config.get('SURVEY','Surveydbquery')
     asteroidspks     = os.path.join(asteroidspkpath, asteroidspks)
     
+    #OUTPUT section
+    outputfile       = get_or_exit(config, 'OUTPUT', 'Output file', 'Output file not provided') 
+    outputformat     = get_or_exit(config, 'OUTPUT', 'Output format', 'Output format not provided')
+    
     # resolve file locations relative to built-in data paths,
     # taking account of user overrides
     spice_mk              = resolve_path(spice_mk)
@@ -170,12 +177,14 @@ def main():
     surveydb              = resolve_path(surveydb)
     # Done reading configuration file
 
-    #If it made it this far, print header
+    #If it made it this far, print/save header
+    inputheader=['START HEADER']
+    print('START HEADER'
     with open(inputfile,'r') as f:
         for row in f:
             if(not row.startswith("#") and not row.startswith(";") and row.strip()):
                 print(row,end='')
-
+                inputheader.append(row[:-1])
     # Changing directory to data path
     os.makedirs(cachedir, exist_ok=True)
     os.chdir(cachedir)
@@ -261,15 +270,21 @@ def main():
     if (ndays<0):
         sys.exit('nFields exceeds the number of frames in the database')
 
-    print("Survey length:")
-    print("Field 1 : ", starttime)
-    print("Field n : ", endtime)
-    print("Days : ", ndays)
-    print('END HEADER')
+    surveydat=["Survey length:","Field 1 : "+str(starttime),
+               "Field n : "+str(endtime), "Days : "+str(ndays),"END HEADER"]    
+    for s in surveydat:
+        inputheader.append(s)
+        print(s)
+        
+#     print("Survey length:")
+#     print("Field 1 : ", starttime)
+#     print("Field n : ", endtime)
+#     print("Days : ", ndays)
+#     print('END HEADER')
 
     threshold=np.radians(threshold)
-    t0 = time.time()
-    a.simulate(starttime, starttime+ndays, c, threshold, obscode)
-    t1 = time.time()
-    print("#Simulation time: ", (t1-t0))
+    #t0 = time.time()
+    a.simulate(starttime, starttime+ndays, c, threshold, obscode, CWD, outputfile, outputformat,inputheader)
+    #t1 = time.time()
+    #print("#Simulation time: ", (t1-t0))
     #os.system('rm ckip fakesclk test.fk tmp.fk camera.ti cksetupfile tmp')

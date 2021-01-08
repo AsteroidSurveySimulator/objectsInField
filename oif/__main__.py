@@ -179,7 +179,7 @@ def main():
 
     #If it made it this far, print/save header
     inputheader=['START HEADER']
-    print('START HEADER'
+    print('START HEADER')
     with open(inputfile,'r') as f:
         for row in f:
             if(not row.startswith("#") and not row.startswith(";") and row.strip()):

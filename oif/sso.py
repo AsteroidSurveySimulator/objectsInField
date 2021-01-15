@@ -506,8 +506,13 @@ class asteroids:
             if (test):# TESTING
                 topostate,lttime = sp.spkezr(str(self.spiceid),ttet,"J2000","LT",observerint)
                 radec=sp.xfmsta(topostate[0:6],"RECTANGULAR","LATITUDINAL"," ")
+
+                #Asteroid-Sun state
                 astsunstate,tmp=sp.spkezr(str(self.spiceid),ttet-lttime,"J2000","None","10")
                 
+                #Observer-Sun state
+                obssunstate,tmp=sp.spkezr(observerint,ttet,"J2000","None","10")
+
                 #Computing phase angle
                 phase_angle=np.dot(topostate[0:3],astsunstate[0:3])
                 phase_angle=phase_angle/np.linalg.norm(topostate[0:3])/np.linalg.norm(astsunstate[0:3])
@@ -533,6 +538,15 @@ class asteroids:
                 opstr=opstr+"%16.3f " %(astsunstate[0])
                 opstr=opstr+"%16.3f " %(astsunstate[1])
                 opstr=opstr+"%16.3f " %(astsunstate[2])
+                opstr=opstr+"%8.3f "  %(astsunstate[3])
+                opstr=opstr+"%8.3f "  %(astsunstate[4])
+                opstr=opstr+"%8.3f "  %(astsunstate[5])
+                opstr=opstr+"%16.3f " %(obssunstate[0])
+                opstr=opstr+"%16.3f " %(obssunstate[1])
+                opstr=opstr+"%16.3f " %(obssunstate[2])
+                opstr=opstr+"%8.3f "  %(obssunstate[3])
+                opstr=opstr+"%8.3f "  %(obssunstate[4])
+                opstr=opstr+"%8.3f "  %(obssunstate[5])
                 opstr=opstr+"%11.6f " %(np.degrees(phase_angle))
                 opstr=opstr+"%7.3f  " %(Vmag)
                 opstr=opstr+"%7.3f  " %(VH0)
@@ -668,7 +682,18 @@ class asteroidlist(asteroids):
         head=head+"AstRARate(deg/day) "
         head=head+"AstDec(deg) "
         head=head+"AstDecRate(deg/day) "
-        head=head+"Ast-Sun(J2000 x,y,z)(km) "
+        head=head+"Ast-Sun(J2000x)(km) "
+        head=head+"Ast-Sun(J2000y)(km) "
+        head=head+"Ast-Sun(J2000z)(km) "
+        head=head+"Ast-Sun(J2000vx)(km/s) "
+        head=head+"Ast-Sun(J2000vy)(km/s) "
+        head=head+"Ast-Sun(J2000vz)(km/s) "
+        head=head+"Obs-Sun(J2000x)(km) "
+        head=head+"Obs-Sun(J2000y)(km) "
+        head=head+"Obs-Sun(J2000z)(km) "
+        head=head+"Obs-Sun(J2000vx)(km/s) "
+        head=head+"Obs-Sun(J2000vy)(km/s) "
+        head=head+"Obs-Sun(J2000vz)(km/s) "
         head=head+"Sun-Ast-Obs(deg) "
         head=head+"V "
         head=head+"V(H=0) "

@@ -202,7 +202,7 @@ class Orbits(object):
         # But if it is set, assume the user has modified the headers appropriately.
         if skiprows is not None:
             if delim is None:
-                orbits = pd.read_table(orbitfile, delim_whitespace=True, skiprows=skiprows)
+                orbits = pd.read_table(orbitfile, sep='\s+', skiprows=skiprows)
             else:
                 orbits = pd.read_table(orbitfile, sep=delim,  skiprows=skiprows)
 
@@ -241,7 +241,7 @@ class Orbits(object):
                     skiprows += 1
                 # Read the data from disk.
                 if delim is None:
-                    orbits = pd.read_table(orbitfile, delim_whitespace=True, names=names, skiprows=skiprows)
+                    orbits = pd.read_table(orbitfile, sep='\s+', names=names, skiprows=skiprows)
                 else:
                     orbits = pd.read_table(orbitfile, sep=delim, names=names, skiprows=skiprows)
 

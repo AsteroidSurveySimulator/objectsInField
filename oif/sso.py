@@ -770,9 +770,9 @@ class asteroidlist(asteroids):
                 cols=[i.strip() for i in output_header]
                 head=''.join(cols)   
             else:    
-                cols=[i.strip(',') for i in output_header]
+                cols=[(i[:-2]+' ') for i in output_header]
                 head=''.join(cols)   
-            #print(head)
+            print(head)
 # #        head="#AstID "
 #         head="ObjID "
 #         head=head+"FieldID "
@@ -834,10 +834,13 @@ class asteroidlist(asteroids):
                     
             if(outputfmt=='csv'):
                 df.to_csv(outfn+'.csv',index=False)
-            elif(outputfmt=='hdf5' or outputfmt =='HDF5'):
+            elif(outputfmt=='hdf5' or outputfmt =='HDF5' or outputfmt == 'h5'):
                 df.to_hdf(CWD+'/'+outputfile+'.h5',key='data',
                           complevel=3, complib='zlib',index=False)
-        print(CWD)
+            else:
+                print('Output file format not recognized. Defaulting to csv')
+                df.to_csv(outfn+'.csv',index=False)    
+        # print(CWD)
 
         # Unloading all SPICE kernels required for simulation
         sp.unload(camera.ikfile)

@@ -97,7 +97,7 @@ def main():
             'Make SPKs':         'T',
             'nDays':             '4000',
             'SPK step':          '20',
-            'nbody':             'F',
+            'nbody':             'T',
             'Object1':           '1',
             'nObjects':          '-1',
             'Make SPKs':         'T',

@@ -8,5 +8,5 @@ PATH_SYMBOLS = ( 'KDIR' )
 KERNELS_TO_LOAD = ( '$KDIR/de430.bsp',
 		    '$KDIR/earth_070425_370426_predict.bpc',
 		    '$KDIR/earth_latest_high_prec.bpc',
-                    '$KDIR/earth_topo_050714.tf',
+                    '$KDIR/earth_topo_201023.tf',
                     '$KDIR/latest_leapseconds.tls')

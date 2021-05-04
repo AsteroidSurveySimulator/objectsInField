@@ -23,6 +23,12 @@ conda create -n oif-dev -c conda-forge -c mjuric python spiceypy openorb numpy p
 conda activate oif-dev
 ```
 
+Download repo via git clone
+
+```
+git clone https://github.com/eggls6/objectsInField.git
+```
+
 Then download the various large binary files (mostly SPICE kernels) that we
 don't keep in git by running
 

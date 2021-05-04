@@ -21,6 +21,13 @@ Begin by creating and activating an environment with all the prerequisites:
 ```
 conda create -n oif-dev -c conda-forge -c mjuric python spiceypy openorb numpy pandas matplotlib spice-utils
 conda activate oif-dev
+
+```
+Then git clone this repo: 
+
+```
+git clone https://github.com/eggls6/objectsInField.git
+
 ```
 
 Then download the various large binary files (mostly SPICE kernels) that we

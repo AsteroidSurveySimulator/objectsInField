@@ -155,6 +155,13 @@ def main():
         spkstep=spkndays/11
         warnings.warn('Not enough steps to create SPKs. Reducing SPK step to %f' %(spkstep),Warning)
     nbody            = config.get('ASTEROID','nbody')
+    inputformat     = get_or_exit(config, 'ASTEROID', 'Input format',  'Input format not provided')
+    if (inputformat=="whitespace" or inputformat=='Whitespace'):
+        inputformat='whitespace'
+    elif (inputformat=="csv" or inputformat=='CSV'):
+        inputformat=','
+    else:
+        sys.exit("Invalid inputfile format specified")
 
     #SURVEY section
     surveydb         = get_or_exit(config, 'SURVEY','Survey database', 'Survey database not provided')
@@ -245,7 +252,7 @@ def main():
         # Creating SPICE SPK for an observatory
         b.createspk(obscode,spkstart-10,spkstart+spkndays+10)
 
-    a=ss.asteroidlist(population_model, asteroidspks, object1, nObjects)
+    a=ss.asteroidlist(population_model, inputformat, asteroidspks, object1, nObjects)
 
     if makespks=='T':
         if (glob.glob("%s" %(asteroidspks+'*.bsp')) and not args.f):
@@ -254,7 +261,7 @@ def main():
             os.makedirs(asteroidspkpath,exist_ok=True)
             a.generatestates(nbody,spkstart-10, spkstart+spkndays+100,spkstep, args.f)
             del a
-            a=ss.asteroidlist(population_model,asteroidspks,object1,nObjects)    
+            a=ss.asteroidlist(population_model, inputformat, asteroidspks,object1,nObjects)    
 
     # Loading camera FOV definition
     c=ts.camera(cameradef_file,spiceik)

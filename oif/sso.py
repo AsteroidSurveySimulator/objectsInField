@@ -645,7 +645,7 @@ class asteroids:
 
 class asteroidlist(asteroids):
     
-    def __init__(self,inputfile,outputfile,object1,nObjects=-1):
+    def __init__(self,inputfile,inputformat,outputfile,object1,nObjects=-1):
 
         """ asteroidlist class contains a bunch of asteroid objects.
         
@@ -655,6 +655,8 @@ class asteroidlist(asteroids):
         ----------
             inputfile : string
                 File name of list of asteroid elements (Refer to SO.ssm from Grav et al. 2010)
+            inputformat : string
+                Format of the input file (csv or whitespace)
             outputfile : string
                 Base filename for NAIF SPICE SPK files of individual asteroids. 
                 Base filename will be appended by asteroid ID, which is just the row number of the
@@ -667,12 +669,16 @@ class asteroidlist(asteroids):
         """
 
         self.inputfile=inputfile
+        self.inputformat=inputformat
         self.outputfile=outputfile
         self.asteroids=[]
 
         #Initializing an orbits object and reading all the orbits to it.
         orbObj=orbits.Orbits()
-        orbObj.readOrbits(inputfile)
+        if (inputformat != 'whitespace'): 
+            orbObj.readOrbits(inputfile, delim=inputformat)
+        else:
+            orbObj.readOrbits(inputfile)
 
         #Converting all the orbits from previous step into OpenOrb orbit format.
         ephemObj=ooephemerides.PyOrbEphemerides()

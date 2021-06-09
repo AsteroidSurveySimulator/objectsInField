@@ -212,7 +212,7 @@ class Orbits(object):
             # We need to do a bit of juggling to do this before pandas reads the whole orbit file though.
             file = open(orbitfile, 'r')
             for line in file:
-                values = line.split()
+                values = line.split(delim)
                 try:
                     # If it is a valid orbit line, we expect 3 to be eccentricity.
                     float(values[3])
@@ -229,8 +229,12 @@ class Orbits(object):
                 # No header; assume it's a typical DES file.
                 names = ('objId', 'FORMAT', 'q', 'e', 'i', 'node', 'argperi', 't_p',
                          'H',  'epoch', 'INDEX', 'N_PAR', 'MOID', 'COMPCODE')
-                orbits = pd.read_table(orbitfile, delim_whitespace=True, skiprows=0,
-                                       names=names)
+
+                if delim is None:
+                    orbits = pd.read_table(orbitfile, sep='\s+', skiprows=0,names=names)
+                else:
+                    orbits = pd.read_table(orbitfile, sep=delim,  skiprows=skiprows,names=names)
+
 
             else:
                 # There is a header, but we also need to check if there is a comment key at the start

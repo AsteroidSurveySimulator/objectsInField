@@ -82,6 +82,7 @@ def main():
     
     inputfile=args.input
 
+
     configdict={}
 
     # Set up reasonable defaults
@@ -116,6 +117,12 @@ def main():
             'SPICE IK':  'camera.ti',
         }
     })
+
+    # Check that the config exists 
+
+    if (os.path.isfile(inputfile) == False):
+        sys.exit("Error: Configuration file %s does not exist" %(inputfile))
+
     config.read(inputfile)
 
     # Update the built-in data location, if overridden by user
@@ -124,6 +131,7 @@ def main():
         USER_DATAPATH = config["CONF"]['Data path']
     except KeyError:
         pass
+
 
     #CONF section
     spice_mk        = config["CONF"]['SPICE metakernel']
@@ -161,7 +169,7 @@ def main():
     elif (inputformat=="csv" or inputformat=='CSV'):
         inputformat=','
     else:
-        sys.exit("Invalid inputfile format specified")
+        sys.exit("Error: Invalid inputfile format specified")
 
     #SURVEY section
     surveydb         = get_or_exit(config, 'SURVEY','Survey database', 'Survey database not provided')
@@ -184,6 +192,28 @@ def main():
     surveydb              = resolve_path(surveydb)
     # Done reading configuration file
 
+    # Check that the population model exists
+
+    if (os.path.isfile(population_model) == False):
+        sys.exit("Error: Population model file %s does not exist" %(population_model))
+
+    # Check that the cameradef_file exists
+
+    if (os.path.isfile(cameradef_file) == False):
+        sys.exit("Error: File containing the definition of the camera field of view %s does not exist" %(cameradef_file))
+
+    # Check that the surveydb  exists
+
+    if (os.path.isfile(surveydb) == False):
+        sys.exit("Error: The survey database %s does not exist" %(surveydb))
+
+
+    # Check that the surveydb  exists
+
+    if (os.path.isfile(spice_mk) == False):
+        sys.exit("Error: Spice Metadata file %s does not exist" %(spice_mk))
+
+
     #If it made it this far, print/save header
     inputheader=['START HEADER']
     print('START HEADER')
@@ -202,7 +232,7 @@ def main():
         oo.pyoorb.oorb_init(ephemeris_fname=depath)
     except Exception as e:
         print(e)
-        sys.exit("Unable to load planetary ephemerides for OpenOrb from %s" %(depath))
+        sys.exit("Error: Unable to load planetary ephemerides for OpenOrb from %s" %(depath))
 
     # Fix up the meta-kernel paths, if it's been templated
     tmpdir = None
@@ -229,24 +259,24 @@ def main():
         sp.furnsh(spice_mk)
     except Exception as e:
         print(e)
-        sys.exit("Unable to load SPICE metakernel from %s" %(spice_mk))
+        sys.exit("Error: Unable to load SPICE metakernel from %s" %(spice_mk))
 
     if spaceflag=='T':
         spaceflag = True
         obscode       = config.get('SURVEY','SCID')
         if not glob.glob(obscode+'.bsp'):
-            sys.exit("Couldn't find spacecraft SPK file.")
+            sys.exit("Error: Couldn't find spacecraft SPK file.")
     else:
         spaceflag = False
         try:
             obscodefile   = config.get('SURVEY','MPCobscode file')
         except:
-            sys.exit('MPC Obs codes file not provided')
+            sys.exit('Error: MPC Obs codes file not provided')
         obscodefile       = resolve_path(obscodefile)
         try:
             obscode       = config.get('SURVEY','Telescope')
         except:
-            sys.exit('Observatory code not provided')
+            sys.exit('Error: Observatory code not provided')
         # Loading the MPC list of observatory codes and coordinates
         b=ts.telescopelist(obscodefile)
         # Creating SPICE SPK for an observatory
@@ -256,7 +286,7 @@ def main():
 
     if makespks=='T':
         if (glob.glob("%s" %(asteroidspks+'*.bsp')) and not args.f):
-            sys.exit("Some of the SPKs might already exist. Run with -f flag to overwrite. Alternatively set Make SPKs = F in configuration file or change the value of Asteroid SPKs in the config file.")
+            sys.exit("Error: Some of the SPKs might already exist. Run with -f flag to overwrite. Alternatively set Make SPKs = F in configuration file or change the value of Asteroid SPKs in the config file.")
         else:
             os.makedirs(asteroidspkpath,exist_ok=True)
             a.generatestates(nbody,spkstart-10, spkstart+spkndays+100,spkstep, args.f)
@@ -275,7 +305,7 @@ def main():
     endtime=tmptimes[-1]
     ndays=np.ceil(endtime-starttime)
     if (ndays<0):
-        sys.exit('nFields exceeds the number of frames in the database')
+        sys.exit('Error: nFields exceeds the number of frames in the database')
 
     surveydat=["Survey length:","Field 1 : "+str(starttime),
                "Field n : "+str(endtime), "Days : "+str(ndays),"END HEADER"]    

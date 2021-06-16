@@ -26,7 +26,7 @@ conda activate oif-dev
 Download repo via git clone
 
 ```
-git clone insert_repo_url_here
+git clone https://github.com/eggls6/objectsInField.git
 ```
 
 Then download the various large binary files (mostly SPICE kernels) that we

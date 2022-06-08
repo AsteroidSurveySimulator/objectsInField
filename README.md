@@ -19,7 +19,7 @@ Distribution's `conda` package manager
 Begin by creating and activating an environment with all the prerequisites:
 
 ```
-conda create -n oif-dev -c conda-forge -c mjuric python spiceypy openorb numpy pandas matplotlib spice-utils
+conda create -n oif-dev -c conda-forge -c mjuric python spiceypy=4.0.1 openorb numpy pandas matplotlib spice-utils
 conda activate oif-dev
 ```
 

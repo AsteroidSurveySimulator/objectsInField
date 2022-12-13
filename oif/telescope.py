@@ -69,7 +69,9 @@ class telescopelist:
         else:
             internal_code=(ord(Code[0])-55)*100+int(Code[1:])
 
-        internal_code = -internal_code
+        if internal_code > 0:
+            internal_code = -internal_code
+
         return (internal_code)
 
 #-----------------------------------------------------------------------------------------------
@@ -255,9 +257,13 @@ class camera:
         """
         if (Code.isdigit()):
             internal_code=int(Code)
+
         else:
             internal_code=(ord(Code[0])-55)*100+int(Code[1:])
-        internal_code = -internal_code
+
+        if internal_code > 0:
+            internal_code = -internal_code
+
         return (internal_code)
 
 #-----------------------------------------------------------------------------------------------
@@ -386,7 +392,6 @@ class camera:
 
         observerint=self.mpc2internal(observer)
         instrumentint=observerint*1000
-
         with open("cksetupfile", "w") as f:
             f.write("KPL/IK \nComments describing the keywords and values \nto follow, as well as any other pertinent \ninformation.\n\\begindata\n")
             f.write("LSK_FILE_NAME           = '%s'\n" %(mk))
@@ -408,7 +413,6 @@ class camera:
             f.write("\\begintext")
         f.close()
 
-
         self.readfields(dbname,field1,nfields, t0)
         with open("ckip","w") as f:
 
@@ -428,7 +432,6 @@ class camera:
             pass
 
         os.system(f'msopck cksetupfile ckip tmp.ck >/dev/null ')
-
         os.system('rsync tmpsclk fakesclk > /dev/null')
         os.system('rsync tmp.ck test.ck > /dev/null')
 

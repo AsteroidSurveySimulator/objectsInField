@@ -19,6 +19,7 @@ import sys
 import argparse
 import warnings
 import pyoorb as oo
+import shutil
 
 from . import shared
 from . import telescope as ts
@@ -167,6 +168,10 @@ def main():
     cameradef_file        = resolve_path(cameradef_file)
     population_model      = resolve_path(population_model)
     surveydb              = resolve_path(surveydb)
+    if spaceflag=='T':
+        obscode       = config.get('SURVEY','SCID')
+        scspk = obscode + '.bsp'
+        scspk = resolve_path(scspk)
     # Done reading configuration file
 
     #If it made it this far, print header
@@ -216,9 +221,10 @@ def main():
 
     if spaceflag=='T':
         spaceflag = True
-        obscode       = config.get('SURVEY','SCID')
-        if not glob.glob(obscode+'.bsp'):
+        if not glob.glob(scspk):
             sys.exit("Couldn't find spacecraft SPK file.")
+        else:
+            shutil.copy2(scspk,os.getcwd())
     else:
         spaceflag = False
         try:
@@ -248,7 +254,6 @@ def main():
 
     # Loading camera FOV definition
     c=ts.camera(cameradef_file,spiceik)
-
     # Loading list of pointings from survey and creating SPICE kernels
     c.createckfk(obscode, surveydb, starttime, Field1, nFields, spice_mk)
 

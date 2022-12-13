@@ -75,7 +75,9 @@ class asteroids:
         else:
             internal_code=(ord(Code[0])-55)*100+int(Code[1:])
 
-        internal_code = -internal_code
+        if internal_code > 0:
+            internal_code = -internal_code
+
         return (internal_code)
 
 #-----------------------------------------------------------------------------------------------

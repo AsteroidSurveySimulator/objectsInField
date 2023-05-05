@@ -121,7 +121,7 @@ def main():
     # Check that the config exists 
 
     if (os.path.isfile(inputfile) == False):
-        sys.exit("Error: Configuration file %s does not exist" %(inputfile))
+        sys.exit("Error: Configuration file does not exist %s" %(inputfile))
 
     config.read(inputfile)
 
@@ -195,23 +195,23 @@ def main():
     # Check that the population model exists
 
     if (os.path.isfile(population_model) == False):
-        sys.exit("Error: Population model file %s does not exist" %(population_model))
+        sys.exit("Error - Population model file does not exist: %s" %(population_model))
 
     # Check that the cameradef_file exists
 
     if (os.path.isfile(cameradef_file) == False):
-        sys.exit("Error: File containing the definition of the camera field of view %s does not exist" %(cameradef_file))
+        sys.exit("Error - File containing the definition of the camera field of view does not exist: %s" %(cameradef_file))
 
     # Check that the surveydb  exists
 
     if (os.path.isfile(surveydb) == False):
-        sys.exit("Error: The survey database %s does not exist" %(surveydb))
+        sys.exit("Error - The survey database does not exist: %s" %(surveydb))
 
 
     # Check that the surveydb  exists
 
     if (os.path.isfile(spice_mk) == False):
-        sys.exit("Error: Spice Metadata file %s does not exist" %(spice_mk))
+        sys.exit("Error - Spice Metadata file does not exist: %s" %(spice_mk))
 
 
     #If it made it this far, print/save header

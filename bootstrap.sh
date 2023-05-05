@@ -23,9 +23,21 @@ download()
 # Download required SPICE kernels
 #
 echo "## Downloading SPICE kernels:"
+# download oif/data/latest_leapseconds.tls https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/latest_leapseconds.tls
+# download oif/data/earth_070425_370426_predict.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_070425_370426_predict.bpc
+# download oif/data/earth_latest_high_prec.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_latest_high_prec.bpc
+# download oif/data/de430.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
+# download oif/data/earth_topo_050714.tf https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/stations/earth_topo_050714.tf
+
+# download oif/data/latest_leapseconds.tls https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/latest_leapseconds.tls
+# download oif/data/earth_200101_990628_predict.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_200101_990628_predict.bpc
+# download oif/data/earth_latest_high_prec.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_latest_high_prec.bpc
+# download oif/data/de430.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
+# download oif/data/earth_topo_201023.tf   https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/stations/earth_topo_201023.tf
+
 download oif/data/latest_leapseconds.tls https://naif.jpl.nasa.gov/pub/naif/generic_kernels/lsk/latest_leapseconds.tls
 download oif/data/earth_070425_370426_predict.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/a_old_versions/earth_070425_370426_predict.bpc
 download oif/data/earth_latest_high_prec.bpc https://naif.jpl.nasa.gov/pub/naif/generic_kernels/pck/earth_latest_high_prec.bpc
 download oif/data/de430.bsp https://naif.jpl.nasa.gov/pub/naif/generic_kernels/spk/planets/de430.bsp
-download oif/data/earth_topo_201023.tf https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/stations/earth_topo_201023.tf
+download oif/data/earth_topo_050714.tf https://naif.jpl.nasa.gov/pub/naif/generic_kernels/fk/stations/a_old_versions/earth_topo_050714.tf
 echo "done."

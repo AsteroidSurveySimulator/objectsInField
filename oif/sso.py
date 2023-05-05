@@ -12,7 +12,36 @@ from . import orbits
 from . import ooephemerides
 from . import shared
 
+import pandas as pd
+
 np.set_printoptions(precision=15)
+
+# Global header variable for output 
+output_header=["ObjID, ", 
+               "FieldID, ", 
+               "FieldMJD, ", 
+               "AstRange(km), ",
+               "AstRangeRate(km/s), ", 
+               "AstRA(deg), ", 
+               "AstRARate(deg/day), ",
+               "AstDec(deg), ", 
+               "AstDecRate(deg/day), ", 
+               "Ast-Sun(J2000x)(km), ",
+               "Ast-Sun(J2000y)(km), ",
+               "Ast-Sun(J2000z)(km), ",
+               "Ast-Sun(J2000vx)(km/s), ",
+               "Ast-Sun(J2000vy)(km/s), ",
+               "Ast-Sun(J2000vz)(km/s), ",
+               "Obs-Sun(J2000x)(km), ",
+               "Obs-Sun(J2000y)(km), ",
+               "Obs-Sun(J2000z)(km), ",
+               "Obs-Sun(J2000vx)(km/s), ",
+               "Obs-Sun(J2000vy)(km/s), ",
+               "Obs-Sun(J2000vz)(km/s), ",
+               "Sun-Ast-Obs(deg), ",
+               "V, ",
+               "V(H=0) "]                    
+
 
 ############################################################################################################
 #                                                Asteroid Class                                            #
@@ -481,7 +510,7 @@ class asteroids:
 
 #-----------------------------------------------------------------------------------------------
     
-    def checkvisspice(self,observer, camera, time, ids):
+    def checkvisspice(self,observer, camera, time, ids, output='stdout',outputfmt=''):
 
         """Use SPICE to check whether asteroid is in FOV at input times
 
@@ -489,16 +518,29 @@ class asteroids:
         ----------
             observer : string
                 Minor Planet Center Observatory Code
+                
             camera : camera object
 
             time : float array
                 Array of times (MJD UTC)
+            
+            output: string
+                Supported ouput
+                "stdout": print to stdout
+                "csv": comma separated values
+                "hdf5": hdf5
 
         """
         
         observerint=str(self.mpc2internal(observer))
-
+        
         count = 0
+        
+        out=[]
+        out_append=out.append
+        deg=np.degrees
+        day2s=shared.day2s
+        
         for i in range(0,len(time)):
 
             ttet= self.mjd2et(time[i])
@@ -522,47 +564,88 @@ class asteroids:
                 astobsdelta=np.linalg.norm(topostate[0:3])
                 astsundelta=np.linalg.norm(astsunstate[0:3])
                 Vmag=self.vismag(self.oorb_orbit[0][10], self.oorb_orbit[0][11], phase_angle, astobsdelta, astsundelta)
-                VH0=Vmag-self.oorb_orbit[0][10]
-
-#                opstr="%-9d "  %(self.id)
-                opstr="%-10s " %(self.name)
-                opstr=opstr+"%9d " %(ids[i])
-                opstr=opstr+"%12.6f " %(time[i])
-#                opstr=opstr+"%10s " %(test)
-                opstr=opstr+"%16.3f " %(radec[0])
-                opstr=opstr+"%8.3f " %(radec[3])
-                opstr=opstr+"%11.6f " %(np.degrees(radec[1])%360)
-                opstr=opstr+"%9.6f " %(np.degrees(radec[4])*shared.day2s)
-                opstr=opstr+"%10.6f " %(np.degrees(radec[2]))
-                opstr=opstr+"%9.6f " %(np.degrees(radec[5])*shared.day2s)
-                opstr=opstr+"%16.3f " %(astsunstate[0])
-                opstr=opstr+"%16.3f " %(astsunstate[1])
-                opstr=opstr+"%16.3f " %(astsunstate[2])
-                opstr=opstr+"%8.3f "  %(astsunstate[3])
-                opstr=opstr+"%8.3f "  %(astsunstate[4])
-                opstr=opstr+"%8.3f "  %(astsunstate[5])
-                opstr=opstr+"%16.3f " %(obssunstate[0])
-                opstr=opstr+"%16.3f " %(obssunstate[1])
-                opstr=opstr+"%16.3f " %(obssunstate[2])
-                opstr=opstr+"%8.3f "  %(obssunstate[3])
-                opstr=opstr+"%8.3f "  %(obssunstate[4])
-                opstr=opstr+"%8.3f "  %(obssunstate[5])
-                opstr=opstr+"%11.6f " %(np.degrees(phase_angle))
-                opstr=opstr+"%7.3f  " %(Vmag)
-                opstr=opstr+"%7.3f  " %(VH0)
-                print(opstr)
+                VH0=Vmag-self.oorb_orbit[0][10]                
+                
+                if(output=='stdout'):
+                    if(outputfmt=='csv'):
+                        opstr="%s" %(self.name)
+                        opstr=opstr+",%d" %(ids[i])
+                        opstr=opstr+",%f" %(time[i])
+        #                opstr=opstr+"%10s " %(test)
+                        opstr=opstr+",%f" %(radec[0])
+                        opstr=opstr+",%.3f" %(radec[3])
+                        opstr=opstr+",%.6f" %(deg(radec[1])%360)
+                        opstr=opstr+",%.6f" %(deg(radec[4])*day2s)
+                        opstr=opstr+",%.6f" %(deg(radec[2]))
+                        opstr=opstr+",%.6f" %(deg(radec[5])*day2s)
+                        opstr=opstr+",%.3f" %(astsunstate[0])
+                        opstr=opstr+",%.3f" %(astsunstate[1])
+                        opstr=opstr+",%.3f" %(astsunstate[2])
+                        opstr=opstr+",%.3f"  %(astsunstate[3])
+                        opstr=opstr+",%.3f"  %(astsunstate[4])
+                        opstr=opstr+",%.3f"  %(astsunstate[5])
+                        opstr=opstr+",%.3f" %(obssunstate[0])
+                        opstr=opstr+",%.3f" %(obssunstate[1])
+                        opstr=opstr+",%.3f" %(obssunstate[2])
+                        opstr=opstr+",%.3f"  %(obssunstate[3])
+                        opstr=opstr+",%.3f"  %(obssunstate[4])
+                        opstr=opstr+",%.3f"  %(obssunstate[5])
+                        opstr=opstr+",%.6f" %(deg(phase_angle))
+                        opstr=opstr+",%.3f" %(Vmag)
+                        opstr=opstr+",%.3f" %(VH0)
+                        print(opstr)
+                    else:    
+                    #                opstr="%-9d "  %(self.id)
+                        opstr="%-10s " %(self.name)
+                        opstr=opstr+"%9d " %(ids[i])
+                        opstr=opstr+"%12.6f " %(time[i])
+        #                opstr=opstr+"%10s " %(test)
+                        opstr=opstr+"%16.3f " %(radec[0])
+                        opstr=opstr+"%8.3f " %(radec[3])
+                        opstr=opstr+"%11.6f " %(deg(radec[1])%360)
+                        opstr=opstr+"%9.6f " %(deg(radec[4])*day2s)
+                        opstr=opstr+"%10.6f " %(deg(radec[2]))
+                        opstr=opstr+"%9.6f " %(deg(radec[5])*day2s)
+                        opstr=opstr+"%16.3f " %(astsunstate[0])
+                        opstr=opstr+"%16.3f " %(astsunstate[1])
+                        opstr=opstr+"%16.3f " %(astsunstate[2])
+                        opstr=opstr+"%8.3f "  %(astsunstate[3])
+                        opstr=opstr+"%8.3f "  %(astsunstate[4])
+                        opstr=opstr+"%8.3f "  %(astsunstate[5])
+                        opstr=opstr+"%16.3f " %(obssunstate[0])
+                        opstr=opstr+"%16.3f " %(obssunstate[1])
+                        opstr=opstr+"%16.3f " %(obssunstate[2])
+                        opstr=opstr+"%8.3f "  %(obssunstate[3])
+                        opstr=opstr+"%8.3f "  %(obssunstate[4])
+                        opstr=opstr+"%8.3f "  %(obssunstate[5])
+                        opstr=opstr+"%11.6f " %(deg(phase_angle))
+                        opstr=opstr+"%7.3f " %(Vmag)
+                        opstr=opstr+"%7.3f " %(VH0)
+                        print(opstr)
+                else:
+                    out_append([self.name,ids[i],time[i],radec[0],radec[3],
+                                deg(radec[1])%360,deg(radec[4])*day2s,deg(radec[2]),
+                                deg(radec[5])*day2s,astsunstate[0],astsunstate[1],
+                                astsunstate[2],astsunstate[3],astsunstate[4],astsunstate[5],
+                                obssunstate[0],obssunstate[1],obssunstate[2],obssunstate[3],
+                                obssunstate[4],obssunstate[5],deg(phase_angle),
+                                Vmag, VH0])
                 count+=1
                 # END TESTING
-
+        
         sp.unload(self.spkname)
         
+        if (output!='stdout'):
+            return out
+            
+               
 ############################################################################################################
 #                                            Asteroid List Class                                           #
 ############################################################################################################
 
 class asteroidlist(asteroids):
-
-    def __init__(self,inputfile,outputfile,object1,nObjects=-1):
+    
+    def __init__(self,inputfile,inputformat,outputfile,object1,nObjects=-1):
 
         """ asteroidlist class contains a bunch of asteroid objects.
         
@@ -572,6 +655,8 @@ class asteroidlist(asteroids):
         ----------
             inputfile : string
                 File name of list of asteroid elements (Refer to SO.ssm from Grav et al. 2010)
+            inputformat : string
+                Format of the input file (csv or whitespace)
             outputfile : string
                 Base filename for NAIF SPICE SPK files of individual asteroids. 
                 Base filename will be appended by asteroid ID, which is just the row number of the
@@ -584,12 +669,16 @@ class asteroidlist(asteroids):
         """
 
         self.inputfile=inputfile
+        self.inputformat=inputformat
         self.outputfile=outputfile
         self.asteroids=[]
 
         #Initializing an orbits object and reading all the orbits to it.
         orbObj=orbits.Orbits()
-        orbObj.readOrbits(inputfile)
+        if (inputformat != 'whitespace'): 
+            orbObj.readOrbits(inputfile, delim=inputformat)
+        else:
+            orbObj.readOrbits(inputfile)
 
         #Converting all the orbits from previous step into OpenOrb orbit format.
         ephemObj=ooephemerides.PyOrbEphemerides()
@@ -660,8 +749,17 @@ class asteroidlist(asteroids):
 
 #-----------------------------------------------------------------------------------------------
 
-    def simulate(self, starttime, stoptime, camera, threshold, obscode):
+    def simulate(self, starttime, stoptime, camera, threshold, obscode, CWD, outputfile='stdout', outputfmt='',
+                 inputheader=''):
         """
+            CWD: string
+                current working directory
+        
+             output: string
+                Supported ouput
+                "stdout": print to stdout
+                "csv": comma separated values
+                "hdf5": hdf5
         """
 #        loading all SPICE kernels required for simulation
         sp.furnsh(camera.ikfile)
@@ -669,44 +767,86 @@ class asteroidlist(asteroids):
         sp.furnsh(camera.ckfile)
         sp.furnsh(camera.fkfile)
         sp.furnsh(camera.sclkfile)
+        
         count=0
 
-        #Print header
-#        head="#AstID "
-        head="ObjID "
-        head=head+"FieldID "
-        head=head+"FieldMJD "
-        head=head+"AstRange(km) "
-        head=head+"AstRangeRate(km/s) "
-        head=head+"AstRA(deg) "
-        head=head+"AstRARate(deg/day) "
-        head=head+"AstDec(deg) "
-        head=head+"AstDecRate(deg/day) "
-        head=head+"Ast-Sun(J2000x)(km) "
-        head=head+"Ast-Sun(J2000y)(km) "
-        head=head+"Ast-Sun(J2000z)(km) "
-        head=head+"Ast-Sun(J2000vx)(km/s) "
-        head=head+"Ast-Sun(J2000vy)(km/s) "
-        head=head+"Ast-Sun(J2000vz)(km/s) "
-        head=head+"Obs-Sun(J2000x)(km) "
-        head=head+"Obs-Sun(J2000y)(km) "
-        head=head+"Obs-Sun(J2000z)(km) "
-        head=head+"Obs-Sun(J2000vx)(km/s) "
-        head=head+"Obs-Sun(J2000vy)(km/s) "
-        head=head+"Obs-Sun(J2000vz)(km/s) "
-        head=head+"Sun-Ast-Obs(deg) "
-        head=head+"V "
-        head=head+"V(H=0) "
-        print(head)
+        #Print column headers to stdout
+        if(outputfile=='stdout'):
+            if(outputfmt=='csv'):
+                cols=[i.strip() for i in output_header]
+                head=''.join(cols)   
+            else:    
+                cols=[(i[:-2]+' ') for i in output_header]
+                head=''.join(cols)   
+            print(head)
+# #        head="#AstID "
+#         head="ObjID "
+#         head=head+"FieldID "
+#         head=head+"FieldMJD "
+#         head=head+"AstRange(km) "
+#         head=head+"AstRangeRate(km/s) "
+#         head=head+"AstRA(deg) "
+#         head=head+"AstRARate(deg/day) "
+#         head=head+"AstDec(deg) "
+#         head=head+"AstDecRate(deg/day) "
+#         head=head+"Ast-Sun(J2000x)(km) "
+#         head=head+"Ast-Sun(J2000y)(km) "
+#         head=head+"Ast-Sun(J2000z)(km) "
+#         head=head+"Ast-Sun(J2000vx)(km/s) "
+#         head=head+"Ast-Sun(J2000vy)(km/s) "
+#         head=head+"Ast-Sun(J2000vz)(km/s) "
+#         head=head+"Obs-Sun(J2000x)(km) "
+#         head=head+"Obs-Sun(J2000y)(km) "
+#         head=head+"Obs-Sun(J2000z)(km) "
+#         head=head+"Obs-Sun(J2000vx)(km/s) "
+#         head=head+"Obs-Sun(J2000vy)(km/s) "
+#         head=head+"Obs-Sun(J2000vz)(km/s) "
+#         head=head+"Sun-Ast-Obs(deg) "
+#         head=head+"V "
+#         head=head+"V(H=0) "
+#         print(head)
+        
+        results=[]
+        results_ext=results.extend
         
         while self.asteroids:
             i=self.asteroids[0]
             i.nightlystates([starttime, stoptime])
             [times,ids]= i.shortlist(camera,threshold)
-            i.checkvisspice(obscode,camera,times,ids)
+            if(outputfile=='stdout'):
+                i.checkvisspice(obscode,camera,times,ids,outputfile,outputfmt)
+            else:
+                res=i.checkvisspice(obscode,camera,times,ids,outputfile,outputfmt)
+       
+                if res:
+                    #print(res)
+                    results_ext(res)
             del i
             del self.asteroids[0]
             count=count+1
+
+        #print(np.array(results_ext))
+        if(outputfile!='stdout'):
+            cols=[i.strip(', ') for i in output_header]
+            #print(cols)
+            #print(results_ext)
+            df=pd.DataFrame(results,columns=cols)
+            #df=pd.DataFrame(results)
+            #CREATE HEADER FILE FOR OUTPUT
+            outfn=CWD+'/'+outputfile
+            with open(outfn+'.hdr', 'w') as filehandle:
+                for listitem in inputheader:
+                    filehandle.write('%s\n' % listitem)
+                    
+            if(outputfmt=='csv'):
+                df.to_csv(outfn+'.csv',index=False)
+            elif(outputfmt=='hdf5' or outputfmt =='HDF5' or outputfmt == 'h5'):
+                df.to_hdf(CWD+'/'+outputfile+'.h5',key='data',
+                          complevel=3, complib='zlib',index=False)
+            else:
+                print('Output file format not recognized. Defaulting to csv')
+                df.to_csv(outfn+'.csv',index=False)    
+        # print(CWD)
 
         # Unloading all SPICE kernels required for simulation
         sp.unload(camera.ikfile)

@@ -268,7 +268,7 @@ class Orbits(object):
         # (depending on file version, origin, etc.)
         # that might need remapping from the on-file values to our standardized values.
         altNames = {}
-        altNames['objId'] = ['objId', 'objid', '!!ObjID', '!!OID', '!!S3MID', 'OID', 'S3MID'
+        altNames['objId'] = ['objId', 'objid', '!!ObjID', '!!OID', '!!S3MID', 'OID', 'S3MID',
                              'objid(int)', 'full_name', '#name', 'ObjID']
         altNames['q'] = ['q']
         altNames['a'] = ['a']

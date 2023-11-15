@@ -5,6 +5,7 @@ from setuptools import setup
 # Infer version from git tag information
 ##
 
+
 def git_version():
     # Uses the following logic:
     #
@@ -66,6 +67,7 @@ def git_version():
     fmt = '{tag}.dev{commitcount}+g{gitsha}{dirtytag}'
     return fmt.format(tag=tag, commitcount=count, gitsha=sha.lstrip('g'), dirtytag=dirtytag)
 
+
 # read in README
 this_dir = os.path.abspath(os.path.dirname(__file__))
 with open(os.path.join(this_dir, 'README.md'), 'rb') as f:
@@ -96,36 +98,32 @@ extras_require = {
 }
 
 setup(
-    name = 'oif',
+    name='oif',
     version=git_version(),
-    description = 'A package to efficiently tell whether a set of objects are in field',
-    long_description = long_description,
-    long_description_content_type = 'text/markdown',
-    url = 'http://github.com/AsteroidSurveySimulator/objectsInField',
-    author = 'Shantanu Naidu and the OIF Team',
-    author_email = 'shantanu.p.naidu@jpl.nasa.gov',
-    license = 'BSD 3-Clause',
-
-    packages = ['oif'],
-
-    entry_points = {
+    description='A package to efficiently tell whether a set of objects are in field',
+    long_description=long_description,
+    long_description_content_type='text/markdown',
+    url='http://github.com/AsteroidSurveySimulator/objectsInField',
+    author='Shantanu Naidu and the OIF Team',
+    author_email='shantanu.p.naidu@jpl.nasa.gov',
+    license='BSD 3-Clause',
+    packages=['oif'],
+    entry_points={
         'console_scripts': [
             'oif = oif.__main__:main',
         ],
     },
-    package_data = {
-        "oif": ["data/*"]	# this is where various standard files and kernels live
+    package_data={
+        "oif": ["data/*"]  # this is where various standard files and kernels live
     },
-    exclude_package_data = {
+    exclude_package_data={
         "": ["*~"]		# don't include backups
     },
-
-    python_requires = '>=3.6.*',
-    install_requires = install_requires,
-    extras_require = extras_require,
+    python_requires='>=3.6',
+    install_requires=install_requires,
+    extras_require=extras_require,
     zip_safe=False,
-
-    classifiers = [
+    classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Programming Language :: Python',
         'Programming Language :: Python :: 3',

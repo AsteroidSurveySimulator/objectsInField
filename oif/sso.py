@@ -328,7 +328,7 @@ class asteroids:
             counter=0
             for state in spicestates:
                 matrix=sp.sxform("ECLIPJ2000","J2000",segmenttimeet[counter])
-                spicestateseq[counter]=sp.mxvg(matrix,spicestates[counter],6,6)
+                spicestateseq[counter]=sp.mxvg(matrix,spicestates[counter])
                 counter=counter+1
                 
 #           SPK Type 9, Lagrange interpolation (Open Orb states are heliocentric, so central body is 10, which is the Sun)

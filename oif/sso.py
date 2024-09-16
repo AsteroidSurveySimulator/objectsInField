@@ -20,7 +20,7 @@ np.set_printoptions(precision=15)
 
 class asteroids:
 
-    def __init__(self, oorbElem, name):
+    def __init__(self, oorbElem, name, ephstart, ephstop, ephstep):
 
         """Asteroids class stores all information relevant to an asteroid.
         Includes asteroid ID, elements, H & G values, state vectors, nightly states, etc.
@@ -35,13 +35,16 @@ class asteroids:
         """
         self.id = int(oorbElem[0][0])
         self.name=name
-
+        
         # Computing Spice ID from asteroid ID in list.
         self.spiceid=self.internal2spice(self.id)
         self.oorb_orbit = oorbElem
-
+        
         self.ephcount=0
-
+        self.ephstart = ephstart
+        self.ephstop = ephstop
+        self.ephstep = ephstep
+        
 #-----------------------------------------------------------------------------------------------
 
     def internal2spice(self,id):
@@ -177,30 +180,18 @@ class asteroids:
 
 #-----------------------------------------------------------------------------------------------
     
-    def generateepochs(self,start,end,step):
+    def generateepochs(self):
         
         """Generate list of times using start and end times and number of steps
 
-        Parameters
-        ----------
-
-            start : float
-                Starting time (MJD)
-            end : float
-                Ending time (MJD)
-                Same size as t
-            step : float 
-                Step size (days)  
-         
         """
 
-        start = float(start)
-        end = float(end)
-        step = float(step)
+        start = float(self.ephstart)
+        end = float(self.ephstop)
+        step = float(self.ephstep)
         self.step=step # Used in save module. Should get rid of this.
-        n_times=1+(end-start)/step
 
-        self.times = np.arange(start, end, step)
+        self.times = np.arange(start, end+step, step)
         self.timesjd=self.times+shared.mjd2jd
         self.timeset=np.zeros(len(self.times)+1)
 
@@ -217,13 +208,13 @@ class asteroids:
         
 #-----------------------------------------------------------------------------------------------
         
-    def propagate(self, type, start,stop,step):
+    def propagate(self, type):
 
         #Type is the type of propagation
         #'F' is two-body
         #'T' is n-body
-        self.generateepochs(start,stop,step)
 
+        self.generateepochs()
         if type == 'T':
             
             for time in self.times:
@@ -273,7 +264,85 @@ class asteroids:
         phase_function = 2.5*np.log10((1-G)*phi[0] + G*phi[1])
         V = H + 5*np.log10(delta) + 5*np.log10(r) - phase_function
         return(V)
+
+#-----------------------------------------------------------------------------------------------
+
+    def downloadspks(self, base_fname, force):
+
+        """ Download SPKs from horizons using smb_spk_ele script provided by JPL.
+         smb_spk_ele requires expect and tck/tk languages.
+
+        Parameters
+        ----------
+            base_fname:string
+                Base file name.
+            force : boolean
+                Force the program to rewrite asteroid SPK files
+
+        """
         
+        #objname="\"sim"+str(self.id)+"\" "
+        objname=str(2444444+self.id)+" "
+        startjd=self.ephstart+shared.mjd2jd
+        stopjd=self.ephstop+shared.mjd2jd
+        self.spkname = base_fname+str(self.id)+".bsp"
+
+
+        #Creating string of orbital elements
+        inp_str = "!$$SOF\n"
+        inp_str = inp_str + "COMMAND = ';'\n"
+        inp_str = inp_str + "MAKE_EPHEM = 'YES'\n"
+        inp_str = inp_str + "EPHEM_TYPE  = 'S'\n"
+        inp_str = inp_str + "OBJ_DATA    = 'NO'\n"
+        inp_str = inp_str + "START_TIME = '%s'\n" %(str(startjd)+"jd")
+        inp_str = inp_str + "STOP_TIME = '%s'\n" %(str(stopjd)+"jd ")
+        inp_str = inp_str + "OBJECT = '%s'\n" %objname
+        inp_str = inp_str + "FRAME = 'J2000'\n"
+        inp_str = inp_str + "QR=%17.12f \n" %(self.oorb_orbit[0][1])               
+        inp_str = inp_str + "EC=%15.12f \n" %(self.oorb_orbit[0][2])               
+        inp_str = inp_str + "IN=%15.10f \n" %(np.degrees(self.oorb_orbit[0][3]))   
+        inp_str = inp_str + "OM=%15.10f \n" %(np.degrees(self.oorb_orbit[0][4]))   
+        inp_str = inp_str + "W=%15.10f \n" %(np.degrees(self.oorb_orbit[0][5]))    
+        inp_str = inp_str + "TP=%17.8f \n" %(self.oorb_orbit[0][6]+shared.mjd2jd)  
+        inp_str = inp_str + "EPOCH=%17.8f\n" %(self.oorb_orbit[0][8]+shared.mjd2jd)
+        inp_str = inp_str + "H  = '%5.2f'\n" %float(self.oorb_orbit[0][10])
+        inp_str = inp_str + "!$$EOF"
+        with open("user_spk.inp", 'w') as f:
+            f.write(inp_str)
+
+        #Creating command string
+        cmd = "curl -s -F format=text -F input=@user_spk.inp https://ssd.jpl.nasa.gov/api/horizons_file.api | awk '/REFGL1N/,0' | base64 --decode > %s" %self.spkname
+        tmp =  os.system(cmd)
+#        elements="\""
+#        elements=elements+"QR=%17.12f " %(self.oorb_orbit[0][1])
+#        elements=elements+"EC=%15.12f " %(self.oorb_orbit[0][2])
+#        elements=elements+"IN=%15.10f " %(np.degrees(self.oorb_orbit[0][3]))
+#        elements=elements+"OM=%15.10f " %(np.degrees(self.oorb_orbit[0][4]))
+#        elements=elements+"W=%15.10f " %(np.degrees(self.oorb_orbit[0][5]))
+#        elements=elements+"TP=%17.8f " %(self.oorb_orbit[0][6]+shared.mjd2jd)
+#        elements=elements+"EPOCH=%17.8f" %(self.oorb_orbit[0][8]+shared.mjd2jd)
+#        elements=elements+"\" "
+
+#        #Creating command for smb_spk_ele
+#        commandstr="../code/smb_spk_ele "
+#        commandstr=commandstr+"-b "
+#        commandstr=commandstr+objname
+#        commandstr=commandstr+str(startjd)+"jd "
+#        commandstr=commandstr+str(stopjd)+"jd "
+#        commandstr=commandstr+elements
+#        commandstr=commandstr+"surveysim@domain.com "
+#        commandstr=commandstr+self.spkname
+##        print(commandstr)
+#        os.system(commandstr)
+
+#        #Modifying the body ID
+        if (os.path.isfile(self.spkname)):
+            tmp=sp.spkobj(self.spkname)
+            bspimodstr= "bspidmod -spki %s -idi %d -ido %s -oflg -mod OBJECT > /dev/null" %(self.spkname, tmp[0], objname)
+            os.system(bspimodstr)
+        else:
+            print("Skipping %s" %(self.spkname))
+
 #-----------------------------------------------------------------------------------------------
             
     def save(self,base_fname, force):
@@ -356,6 +425,8 @@ class asteroids:
                 
         """
 
+        if timerange[1] > self.ephstop:
+            timerange[1] = self.ephstop
         # Converting from MJD to JD and computing number of days including endpoints
         start=int(timerange[0])+shared.mjd2jd
         stop =int(timerange[-1])+shared.mjd2jd
@@ -444,6 +515,13 @@ class asteroids:
         ids=camera.obsHistID
         fra=camera.fieldRA
         fdec=camera.fieldDec
+
+        #Remove fields that exceed ephstop time
+        filter = t < self.ephstop-0.004
+        t = t[filter]
+        ids = ids[filter]
+        fra = fra[filter]
+        fdec = fdec[filter]
 
         # Cosine of threshold angle
         cos_thresh=np.cos(thresh_angle)
@@ -564,7 +642,7 @@ class asteroids:
 
 class asteroidlist(asteroids):
 
-    def __init__(self,inputfile,outputfile,object1,nObjects=-1):
+    def __init__(self,inputfile,outputfile,start, stop, step, stopTimeDict,object1,nObjects=-1):
 
         """ asteroidlist class contains a bunch of asteroid objects.
         
@@ -578,6 +656,14 @@ class asteroidlist(asteroids):
                 Base filename for NAIF SPICE SPK files of individual asteroids. 
                 Base filename will be appended by asteroid ID, which is just the row number of the
                 asteroid in the inputfile.
+            start : float
+                Epoch for first set of state vectors (UTC MJD)
+            stop : float
+                Epoch for last set of state vectors (UTC MJD)
+            step : float
+                Step size for generating and storing state vectors (UTC MJD)
+            stopTimeDict: dictionary
+                Dictionary of custom stop times in MJD UTC for objects {ID:stoptime} 
             object1 : int
                 First object to be read from inputfile
             nObjects : int
@@ -607,15 +693,24 @@ class asteroidlist(asteroids):
 
         #Initializing asteroid objects for each orbit.
         for i in np.arange(object1-1,object1-1+nObjects):
-            self.asteroids.append(asteroids([ephemObj.oorbElem[i]], orbObj.orbits.objId[i]))
-
+            #Check if ephstart is in custom dictionary or assign default value
+            ephstop = stopTimeDict.get(orbObj.orbits.objId[i], stop)
+            #Check if start time is before stop time
+            if start > ephstop:
+                ephstart = ephstop
+            else:
+                ephstart = start
+            ephstep = step
+            self.asteroids.append(asteroids([ephemObj.oorbElem[i]], orbObj.orbits.objId[i], ephstart, ephstop, ephstep))
+ 
+        
         for i in self.asteroids:
             i.elem2vec()
             i.spkname=outputfile+str(i.id)+".bsp"
             
 #-----------------------------------------------------------------------------------------------
             
-    def generatestates(self,type,start,stop,step, force):
+    def generatestates(self,type,force):
 
         """Generate state vectors for all asteroids contained in this object.
 
@@ -624,26 +719,31 @@ class asteroidlist(asteroids):
             Type : float
                 Type of propagation. 'F' - 2-body,
                                      'T' - n-body (8 planets and Sun)
-            start : float
-                Epoch for first set of state vectors (UTC MJD)
-            stop : float
-                Epoch for last set of state vectors (UTC MJD)
-            step : float
-                Step size for generating and storing state vectors (UTC MJD)
+                                     'H' - Download SPKs from Horizons 
             force : boolean
                 Force the program to rewrite asteroid SPK files
         """
 
         count=0
 
-        # Propagate using openorb and save spks.
-        while self.asteroids:
-            i=self.asteroids[0]
-            i.propagate(type,start,stop,step)
-            i.save(self.outputfile, force)
-            del i
-            del self.asteroids[0]
-            count=count+1
+        # If type of propagation is H (for Horizons) download spks
+        # else propagate using openorb and save spks.
+        if (type == 'H'):
+            while self.asteroids:
+                i=self.asteroids[0]
+                i.downloadspks(self.outputfile,force)
+                del i
+                del self.asteroids[0]
+                count=count+1
+        else:
+            while self.asteroids:
+                i=self.asteroids[0]
+                i.propagate(type)
+                i.save(self.outputfile, force)
+                del i
+                del self.asteroids[0]
+                count=count+1
+
             
 #-----------------------------------------------------------------------------------------------        
 
@@ -674,28 +774,28 @@ class asteroidlist(asteroids):
         count=0
 
         #Print header
-#        head="#AstID "
-        head="ObjID "
+        #        head="#AstID "
+        head="ObjID        "
         head=head+"FieldID "
         head=head+"FieldMJD "
-        head=head+"AstRange(km) "
-        head=head+"AstRangeRate(km/s) "
-        head=head+"AstRA(deg) "
-        head=head+"AstRARate(deg/day) "
-        head=head+"AstDec(deg) "
-        head=head+"AstDecRate(deg/day) "
-        head=head+"Ast-Sun(J2000x)(km) "
-        head=head+"Ast-Sun(J2000y)(km) "
-        head=head+"Ast-Sun(J2000z)(km) "
-        head=head+"Ast-Sun(J2000vx)(km/s) "
-        head=head+"Ast-Sun(J2000vy)(km/s) "
-        head=head+"Ast-Sun(J2000vz)(km/s) "
-        head=head+"Obs-Sun(J2000x)(km) "
-        head=head+"Obs-Sun(J2000y)(km) "
-        head=head+"Obs-Sun(J2000z)(km) "
-        head=head+"Obs-Sun(J2000vx)(km/s) "
-        head=head+"Obs-Sun(J2000vy)(km/s) "
-        head=head+"Obs-Sun(J2000vz)(km/s) "
+        head=head+"Range(km) "
+        head=head+"RangeRate(km/s) "
+        head=head+"RA(deg) "
+        head=head+"RARate(deg/day) "
+        head=head+"Dec(deg) "
+        head=head+"DecRate(deg/day) "
+        head=head+"Ast-Sun(J2000) [x,y,z in (km)] [vx,vy,vz in km/s]                             "
+        #head=head+"Ast-Sun(J2000y)(km) "
+        #head=head+"Ast-Sun(J2000z)(km) "
+        #head=head+"Ast-Sun(J2000vx)(km/s) "
+        #head=head+"Ast-Sun(J2000vy)(km/s) "
+        #head=head+"Ast-Sun(J2000vz)(km/s) "
+        head=head+"Obs-Sun(J2000) [x,y,z in (km)] [vx,vy,vz in km/s]                          "
+        #head=head+"Obs-Sun(J2000y)(km) "
+        #head=head+"Obs-Sun(J2000z)(km) "
+        #head=head+"Obs-Sun(J2000vx)(km/s) "
+        #head=head+"Obs-Sun(J2000vy)(km/s) "
+        #head=head+"Obs-Sun(J2000vz)(km/s) "
         head=head+"Sun-Ast-Obs(deg) "
         head=head+"V "
         head=head+"V(H=0) "

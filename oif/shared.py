@@ -4,3 +4,8 @@ au2m = 149597870700.0    # Conversion factor from au to meters.
 au2km = au2m/1000.0      # Conversion factor from au to km.
 day2s = 86400.0          # Number of seconds in a day.
 gms = 1.32712440018e11   # GM of the Sun in km^3 s^-2
+#Spiceypy time formats
+TDBFMT = 'YYYY MON DD HR:MN:SC.### (TDB) ::TDB'
+UTCFMT = 'YYYY MON DD HR:MN ::UTC'
+APIFMT = 'YYYY-MM-DD ::TDB'
+SUMFMT = 'YYYY MON DD ::UTC'

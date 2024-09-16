@@ -20,6 +20,7 @@ import argparse
 import warnings
 import pyoorb as oo
 import shutil
+import pandas as pd
 
 from . import shared
 from . import telescope as ts
@@ -153,6 +154,11 @@ def main():
         spkstep=spkndays/11
         warnings.warn('Not enough steps to create SPKs. Reducing SPK step to %f' %(spkstep),Warning)
     nbody            = config.get('ASTEROID','nbody')
+    if config.has_option('ASTEROID', 'stopTimesFile'):
+        stopTimesFile = config.get('ASTEROID', 'stopTimesFile')
+    else:
+        # Handle the missing option (log, set a default, etc.)
+        stopTimesFile = False
 
     #SURVEY section
     surveydb         = get_or_exit(config, 'SURVEY','Survey database', 'Survey database not provided')
@@ -168,6 +174,7 @@ def main():
     cameradef_file        = resolve_path(cameradef_file)
     population_model      = resolve_path(population_model)
     surveydb              = resolve_path(surveydb)
+    stopTimesFile         = resolve_path(stopTimesFile)
     if spaceflag=='T':
         obscode       = config.get('SURVEY','SCID')
         scspk = obscode + '.bsp'
@@ -219,6 +226,32 @@ def main():
         print(e)
         sys.exit("Unable to load SPICE metakernel from %s" %(spice_mk))
 
+    #Read in the stopTimesFile
+    if stopTimesFile:
+        df_stopTimes = pd.read_csv(stopTimesFile, header=None, comment="#", sep='\s+')
+        # Combine year, month, day into a single string
+        df_stopTimes['date_str'] = df_stopTimes.apply(lambda row: f"{int(row[1]):04d}-{int(row[2]):02d}-{int(row[3]):02d}", axis=1)
+        df_stopTimes['decimal_day'] = df_stopTimes[3].apply(lambda x: x - int(x))  # Extract decimal part of the day
+
+
+        # Function to convert calendar date to MJD using only spiceypy
+        def calendar_to_mjd(date_str, decimal_day):
+            # Convert calendar date to ephemeris time (ET)
+            et = sp.str2et(f"{date_str}")
+            et += decimal_day * 86400
+
+            # Convert ET to Julian Date in UTC
+            jd_utc_str = sp.et2utc(et, 'J', 10)  # JD format
+            jd = float(jd_utc_str.split()[1])  # Extract the JD value from the string
+            # Convert JD to MJD
+            mjd = jd - 2400000.5
+            return mjd
+        # Apply the MJD conversion, including the decimal day
+        df_stopTimes['MJD'] = df_stopTimes.apply(lambda row: calendar_to_mjd(row['date_str'], row['decimal_day']), axis=1)
+        
+        # Convert DataFrame to dictionary with column 0 as the key and MJD as the value
+        stopTimeDict = df_stopTimes.set_index(0)['MJD'].to_dict()
+        
     if spaceflag=='T':
         spaceflag = True
         if not glob.glob(scspk):
@@ -241,16 +274,16 @@ def main():
         # Creating SPICE SPK for an observatory
         b.createspk(obscode,spkstart-10,spkstart+spkndays+10)
 
-    a=ss.asteroidlist(population_model, asteroidspks, object1, nObjects)
+    a=ss.asteroidlist(population_model, asteroidspks, spkstart-10, spkstart+spkndays+100, spkstep, stopTimeDict, object1, nObjects)
 
     if makespks=='T':
         if (glob.glob("%s" %(asteroidspks+'*.bsp')) and not args.f):
             sys.exit("Some of the SPKs might already exist. Run with -f flag to overwrite. Alternatively set Make SPKs = F in configuration file or change the value of Asteroid SPKs in the config file.")
         else:
             os.makedirs(asteroidspkpath,exist_ok=True)
-            a.generatestates(nbody,spkstart-10, spkstart+spkndays+100,spkstep, args.f)
+            a.generatestates(nbody, args.f)
             del a
-            a=ss.asteroidlist(population_model,asteroidspks,object1,nObjects)    
+            a=ss.asteroidlist(population_model,asteroidspks,spkstart-10, spkstart+spkndays+100, spkstep, stopTimeDict, object1,nObjects)    
 
     # Loading camera FOV definition
     c=ts.camera(cameradef_file,spiceik)

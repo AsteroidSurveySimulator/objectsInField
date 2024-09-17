@@ -241,10 +241,12 @@ def main():
             et += decimal_day * 86400
 
             # Convert ET to Julian Date in UTC
-            jd_utc_str = sp.et2utc(et, 'J', 10)  # JD format
-            jd = float(jd_utc_str.split()[1])  # Extract the JD value from the string
-            # Convert JD to MJD
+            jd = 2451545.0 + et/86400
             mjd = jd - 2400000.5
+            #jd_utc_str = sp.et2utc(et, 'J', 10)  # JD format
+            #jd = float(jd_utc_str.split()[1])  # Extract the JD value from the string
+            # Convert JD to MJD
+            #mjd = jd - 2400000.5
             return mjd
         # Apply the MJD conversion, including the decimal day
         df_stopTimes['MJD'] = df_stopTimes.apply(lambda row: calendar_to_mjd(row['date_str'], row['decimal_day']), axis=1)
@@ -252,6 +254,7 @@ def main():
         # Convert DataFrame to dictionary with column 0 as the key and MJD as the value
         stopTimeDict = df_stopTimes.set_index(0)['MJD'].to_dict()
         
+    t0 = time.time()
     if spaceflag=='T':
         spaceflag = True
         if not glob.glob(scspk):
@@ -305,8 +308,8 @@ def main():
     print('END HEADER')
 
     threshold=np.radians(threshold)
-    t0 = time.time()
-    a.simulate(starttime, starttime+ndays, c, threshold, obscode)
     t1 = time.time()
-    print("#Simulation time: ", (t1-t0))
+    a.simulate(starttime, starttime+ndays, c, threshold, obscode)
+    t2 = time.time()
+    print("#Startup time (s): ", (t1-t0), " Simulation time (s): ", (t2-t1))
     #os.system('rm ckip fakesclk test.fk tmp.fk camera.ti cksetupfile tmp')

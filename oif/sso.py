@@ -454,7 +454,9 @@ class asteroids:
             counter += 1
 
             # Converting from UTC to ET
-            timeet=sp.str2et('JD '+repr(i))
+            #timeet=sp.str2et('JD '+repr(i))
+            # Converting from JD to ET_SEC, both in TDB
+            timeet = 86400.0 * (i - 2451545.0)
 
             # Finding direction of asteroids from geocenter
             # Finding states wrt station adds 4 days for 1e6 objects
@@ -527,6 +529,8 @@ class asteroids:
         cos_thresh=np.cos(thresh_angle)
 
         # Computing indices of corresponding midnight states for each FOV
+        # Could be slightly improved by always using the current night's midnight
+        # and if there is no current night midnight then use last night...
         indices=(t.astype(int)-t[0].astype(int)).astype(int)
         
         tt=t+shared.mjd2jd

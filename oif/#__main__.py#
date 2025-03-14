@@ -174,8 +174,7 @@ def main():
     cameradef_file        = resolve_path(cameradef_file)
     population_model      = resolve_path(population_model)
     surveydb              = resolve_path(surveydb)
-    if stopTimesFile:
-        stopTimesFile         = resolve_path(stopTimesFile)
+    stopTimesFile         = resolve_path(stopTimesFile)
     if spaceflag=='T':
         obscode       = config.get('SURVEY','SCID')
         scspk = obscode + '.bsp'
@@ -252,9 +251,7 @@ def main():
         
         # Convert DataFrame to dictionary with column 0 as the key and MJD as the value
         stopTimeDict = df_stopTimes.set_index(0)['MJD'].to_dict()
-    else:
-        stopTimeDict={}
-
+        
     if spaceflag=='T':
         spaceflag = True
         if not glob.glob(scspk):
@@ -284,9 +281,9 @@ def main():
             sys.exit("Some of the SPKs might already exist. Run with -f flag to overwrite. Alternatively set Make SPKs = F in configuration file or change the value of Asteroid SPKs in the config file.")
         else:
             os.makedirs(asteroidspkpath,exist_ok=True)
-            a.generatestates(nbody, args.f)
+            a.generatestates(nbody, spkstep,= args.f)
             del a
-            a=ss.asteroidlist(population_model,asteroidspks,spkstart-10, spkstart+spkndays+100, spkstep, stopTimeDict, object1,nObjects)    
+            a=ss.asteroidlist(population_model,asteroidspks,spkstart-10, spkstart+spkndays+100, stopTimeDict, object1,nObjects)    
 
     # Loading camera FOV definition
     c=ts.camera(cameradef_file,spiceik)
